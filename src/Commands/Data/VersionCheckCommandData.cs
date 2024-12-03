@@ -2,8 +2,9 @@
 
 namespace ProjectVTK.Shared.Commands.Data;
 
-[CommandType("CHECK_VERSION")]
-public record struct VersionCheckCommandData : ICommandData
+[CommandProtocol(CommandProtocols.VersionCheck)]
+public readonly record struct VersionCheckCommandData : ICommandData
 {
-    public float Version { get; set; }
+    public float? Version { get; init; }
+    public string? Message { get; init; }
 }

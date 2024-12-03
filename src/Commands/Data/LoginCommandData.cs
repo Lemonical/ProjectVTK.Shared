@@ -2,9 +2,10 @@
 
 namespace ProjectVTK.Shared.Commands.Data;
 
-[CommandType("LOGIN")]
-public record struct LoginCommandData : ICommandData
+[CommandProtocol(CommandProtocols.Login)]
+public readonly record struct LoginCommandData : ICommandData
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public string? Username { get; init; }
+    public string? Password { get; init; }
+    public Guid? SessionId { get; init; }
 }

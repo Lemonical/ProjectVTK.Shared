@@ -1,39 +1,52 @@
-﻿using ProjectVTK.Shared.Attributes;
-using ProjectVTK.Shared.Commands;
+﻿using ProjectVTK.Shared.Commands;
+using ProjectVTK.Shared.Commands.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace ProjectVTK.Shared.Converters;
 
-public class CommandDataConverter : JsonConverter<ICommandData>
+public class CommandDataConverter : JsonConverter<object>
 {
-    public override ICommandData? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    private readonly Dictionary<CommandProtocols, Type> _dataTypeMappings;
+
+    public CommandDataConverter()
+    {
+        // TODO: Need more
+        _dataTypeMappings = new Dictionary<CommandProtocols, Type>
+        {
+            { CommandProtocols.Login, typeof(LoginCommandData) },
+            { CommandProtocols.VersionCheck, typeof(VersionCheckCommandData) },
+            { CommandProtocols.GetServers, typeof(GetServersCommandData) }
+        };
+    }
+
+    public override bool CanConvert(Type type) 
+        => type == typeof(object);
+
+    public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         using var document = JsonDocument.ParseValue(ref reader);
         var root = document.RootElement;
 
-        if (root.TryGetProperty("command_type", out var commandTypeProperty))
-        {
-            var commandType = commandTypeProperty.GetString();
+        if (!root.TryGetProperty("protocol", out var commandProtocolElement))
+            throw new JsonException("Missing 'protocol' property in JSON string.");
 
-            var dataType = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.GetTypes())
-                .Where(t => t.GetCustomAttributes(typeof(CommandTypeAttribute), false).Length != 0)
-                .FirstOrDefault(t =>
-                    t.GetCustomAttributes(typeof(CommandTypeAttribute), false)
-                    .OfType<CommandTypeAttribute>()
-                    .Any(attr => attr.CommandType == commandType)) ?? throw new InvalidOperationException($"Unknown command type: {commandType}");
+        if (!Enum.TryParse<CommandProtocols>(commandProtocolElement.GetString(), true, out var commandType))
+            throw new JsonException($"Unknown protocol: {commandProtocolElement.GetString()}");
 
-            var dataJson = root.GetProperty("data").GetRawText();
-            return (ICommandData?)JsonSerializer.Deserialize(dataJson, dataType, options);
-        }
+        if (!root.TryGetProperty("data", out var dataElement))
+            throw new JsonException("Missing 'data' property in JSON string.");
 
-        throw new JsonException("Invalid command JSON format");
+        if (!_dataTypeMappings.TryGetValue(commandType, out var dataType))
+            throw new JsonException($"No data type mapping found for command type: {commandType}");
+
+        return JsonSerializer.Deserialize(dataElement.GetRawText(), dataType, options);
     }
 
-    public override void Write(Utf8JsonWriter writer, ICommandData value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
     {
-        JsonSerializer.Serialize(writer, value, options);
+        throw new NotSupportedException("Writing CommandData directly is not supported.");
     }
 }
+
 

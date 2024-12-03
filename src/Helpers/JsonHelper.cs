@@ -1,5 +1,6 @@
 ﻿using ProjectVTK.Shared.Converters;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ProjectVTK.Shared.Helpers;
 
@@ -14,6 +15,7 @@ public static class JsonHelper
         };
 
         options.Converters.Add(new CommandDataConverter());
+        options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
 
         return options;
     }

@@ -12,7 +12,7 @@ public enum CommandStatusCode
 
 public readonly record struct Command
 {
-    public string CommandType { get; init; }
+    public CommandProtocols Protocol { get; init; }
     public Guid? Id { get; init; }
     public CommandStatusCode? StatusCode { get; init; }
     public string? ErrorMessage { get; init; }
@@ -29,6 +29,14 @@ public readonly record struct Command
     /// <summary>
     /// Creates a new command request object
     /// </summary>
+    /// <param name="protocol">The command protocol</param>
+    /// <returns>string in JSON format</returns>
+    public static string CreateRequest(CommandProtocols protocol)
+        => JsonSerializer.Serialize(CreateInstance(protocol, new()), JsonHelper.GetSerializerOptions());
+
+    /// <summary>
+    /// Creates a new command request object
+    /// </summary>
     /// <param name="requestGuid">GUID from the command request to respond to</param>
     /// <param name="data">Command data inheriting ICommandData interface</param>
     /// <param name="statusCode">Success or Failed status response code</param>
@@ -37,16 +45,40 @@ public readonly record struct Command
     public static string CreateResponse(Guid requestGuid, ICommandData data, CommandStatusCode statusCode, string? errorMessage = null)
         => JsonSerializer.Serialize(CreateInstance(data, requestGuid, statusCode, errorMessage), JsonHelper.GetSerializerOptions());
 
+    /// <summary>
+    /// Creates a new command request object
+    /// </summary>
+    /// <param name="requestGuid">GUID from the command request to respond to</param>
+    /// <param name="protocol">The type of command</param>
+    /// <param name="statusCode">Success or Failed status response code</param>
+    /// <param name="errorMessage">Message detailing the error or failure in handling the command, if any</param>
+    /// <returns>string in JSON format</returns>
+    public static string CreateResponse(Guid requestGuid, CommandProtocols protocol, CommandStatusCode statusCode, string? errorMessage = null)
+        => JsonSerializer.Serialize(CreateInstance(protocol, requestGuid, statusCode, errorMessage), JsonHelper.GetSerializerOptions());
+
+    private static Command CreateInstance(CommandProtocols protocol, Guid? requestGuid = null, CommandStatusCode? statusCode = null, string? errorMessage = null)
+    {
+        var command = new Command
+        {
+            Protocol = protocol,
+            Id = requestGuid,
+            StatusCode = statusCode,
+            ErrorMessage = errorMessage
+        };
+
+        return command;
+    }
+
     private static Command CreateInstance(ICommandData data, Guid? requestGuid = null, CommandStatusCode? statusCode = null, string? errorMessage = null)
     {
-        var commandType = (data.GetType()
-            .GetCustomAttributes(typeof(CommandTypeAttribute), false)
-            .OfType<CommandTypeAttribute>()
-            .FirstOrDefault()?.CommandType) ?? throw new InvalidOperationException($"No CommandTypeAttribute defined on {data.GetType().Name}");
+        var protocol = (data.GetType()
+            .GetCustomAttributes(typeof(CommandProtocolAttribute), false)
+            .OfType<CommandProtocolAttribute>()
+            .FirstOrDefault()?.Protocol) ?? throw new InvalidOperationException($"No ProtocolAttribute defined on {data.GetType().Name}");
 
         var command = new Command
         {
-            CommandType = commandType,
+            Protocol = protocol,
             Id = requestGuid,
             StatusCode = statusCode,
             ErrorMessage = errorMessage,
