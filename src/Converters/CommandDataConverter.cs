@@ -1,5 +1,5 @@
 ﻿using ProjectVTK.Shared.Attributes;
-using ProjectVTK.Shared.Commands.Data;
+using ProjectVTK.Shared.Commands;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
