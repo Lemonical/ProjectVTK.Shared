@@ -4,13 +4,11 @@ public class CommandHandlerFactory(IEnumerable<ICommandHandler> handlers)
 {
     private readonly IEnumerable<ICommandHandler> _handlers = handlers;
 
-    public ICommandHandler? GetHandler(string commandType)
+    public ICommandHandler? GetHandler(CommandProtocols protocol)
     {
         foreach (var handler in _handlers)
-        {
-            if (handler.CanHandle(commandType))
+            if (handler.CanHandle(protocol))
                 return handler;
-        }
         return null;
     }
 }

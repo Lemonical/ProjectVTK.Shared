@@ -4,7 +4,7 @@ namespace ProjectVTK.Shared.Commands;
 
 public interface ICommandHandler
 {
-    bool CanHandle(string commandType);
+    bool CanHandle(CommandProtocols protocol);
     Task HandleAsync(Command command, IWebSocketConnection socket);
 }
 
