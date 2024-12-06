@@ -10,13 +10,22 @@ public enum CommandStatusCode
     Failed
 }
 
+public enum CommandProtocols
+{
+    Unknown,
+    Login,
+    CreateAccount,
+    VersionCheck,
+    GetServers,
+}
+
 public readonly record struct Command
 {
     public CommandProtocols Protocol { get; init; }
     public Guid? Id { get; init; }
-    public CommandStatusCode? StatusCode { get; init; }
+    public CommandStatusCode? Status { get; init; }
     public string? ErrorMessage { get; init; }
-    public object Data { get; init; }
+    public object? Data { get; init; }
 
     /// <summary>
     /// Creates a new command request object
@@ -24,7 +33,7 @@ public readonly record struct Command
     /// <param name="data">Command data inheriting ICommandData interface</param>
     /// <returns>string in JSON format</returns>
     public static string CreateRequest(ICommandData data)
-        => JsonSerializer.Serialize(CreateInstance(data, new()), JsonHelper.GetSerializerOptions());
+        => JsonSerializer.Serialize(CreateInstance(data, Guid.NewGuid()), JsonHelper.GetSerializerOptions());
 
     /// <summary>
     /// Creates a new command request object
@@ -32,7 +41,7 @@ public readonly record struct Command
     /// <param name="protocol">The command protocol</param>
     /// <returns>string in JSON format</returns>
     public static string CreateRequest(CommandProtocols protocol)
-        => JsonSerializer.Serialize(CreateInstance(protocol, new()), JsonHelper.GetSerializerOptions());
+        => JsonSerializer.Serialize(CreateInstance(protocol, Guid.NewGuid()), JsonHelper.GetSerializerOptions());
 
     /// <summary>
     /// Creates a new command request object
@@ -62,7 +71,7 @@ public readonly record struct Command
         {
             Protocol = protocol,
             Id = requestGuid,
-            StatusCode = statusCode,
+            Status = statusCode,
             ErrorMessage = errorMessage
         };
 
@@ -80,7 +89,7 @@ public readonly record struct Command
         {
             Protocol = protocol,
             Id = requestGuid,
-            StatusCode = statusCode,
+            Status = statusCode,
             ErrorMessage = errorMessage,
             Data = data
         };

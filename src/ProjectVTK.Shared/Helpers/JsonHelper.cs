@@ -11,10 +11,11 @@ public static class JsonHelper
         var options = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault,
             WriteIndented = isIdented
         };
 
-        options.Converters.Add(new CommandDataConverter());
+        options.Converters.Add(new CommandConverter());
         options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
 
         return options;
