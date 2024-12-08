@@ -13,8 +13,11 @@ public enum CommandProtocols
     CreateAccount,
     VersionCheck,
     GetServers,
+    PublicizeServer,
     UpdateServer,
     RequestDownload,
+    RequestContent,
+    AuthUser
 }
 
 public readonly record struct Command
