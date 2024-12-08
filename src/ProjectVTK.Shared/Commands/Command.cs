@@ -4,11 +4,7 @@ using System.Text.Json;
 
 namespace ProjectVTK.Shared.Commands;
 
-public enum CommandStatusCode
-{
-    Success,
-    Failed
-}
+public enum CommandStatusCode { Success, Failed }
 
 public enum CommandProtocols
 {
@@ -17,6 +13,8 @@ public enum CommandProtocols
     CreateAccount,
     VersionCheck,
     GetServers,
+    UpdateServer,
+    RequestDownload,
 }
 
 public readonly record struct Command
