@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProjectVTK.Shared\ProjectVTK.Shared.csproj" />
+    <ProjectReference Include="..\src\ProjectVTK.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

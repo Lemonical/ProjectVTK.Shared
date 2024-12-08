@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectVTK.Shared", "ProjectVTK.Shared\ProjectVTK.Shared.csproj", "{748A9788-1C66-4E98-BFB1-2DAA1589A8BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectVTK.Shared", "src\ProjectVTK.Shared.csproj", "{748A9788-1C66-4E98-BFB1-2DAA1589A8BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectVTK.Shared.Tests", "ProjectVTK.Shared.Tests\ProjectVTK.Shared.Tests.csproj", "{C71E2059-1B51-450E-8F55-3888DAB5D10E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectVTK.Shared.Tests", "tests\ProjectVTK.Shared.Tests.csproj", "{C71E2059-1B51-450E-8F55-3888DAB5D10E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
