@@ -1,6 +1,7 @@
-﻿using ProjectVTK.Shared.Commands;
-using ProjectVTK.Shared.Commands.Data;
+﻿using ProjectVTK.Shared.Attributes;
+using ProjectVTK.Shared.Commands;
 using ProjectVTK.Shared.Helpers;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -8,10 +9,23 @@ namespace ProjectVTK.Shared.Converters;
 
 public class CommandConverter : JsonConverter<Command>
 {
-    private static readonly Dictionary<CommandProtocols, Type> _mappings = new()
+    private readonly Dictionary<CommandProtocols, Type> _mappings;
+
+    public CommandConverter()
     {
-        { CommandProtocols.Login, typeof(LoginCommandData) },
-    };
+        var types = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => typeof(ICommandData).IsAssignableFrom(t) && t.IsDefined(typeof(CommandProtocolAttribute), false));
+
+        var mappings = new Dictionary<CommandProtocols, Type>();
+        foreach (var type in types)
+        {
+            var attribute = (CommandProtocolAttribute)type.GetCustomAttribute(typeof(CommandProtocolAttribute))!;
+            mappings[attribute.Protocol] = type;
+        }
+
+        _mappings = mappings;
+    }
 
     public override Command Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -82,6 +96,3 @@ public class CommandConverter : JsonConverter<Command>
         JsonSerializer.Serialize(writer, (object)value, modifiedOptions);
     }
 }
-
-
-
