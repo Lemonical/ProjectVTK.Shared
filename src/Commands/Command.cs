@@ -16,7 +16,7 @@ public enum CommandProtocols
     PublicizeServer,
     UpdateServer,
     RequestDownload,
-    RequestContent,
+    GetServerMetadata,
     AuthUser
 }
 

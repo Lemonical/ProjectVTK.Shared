@@ -8,4 +8,5 @@ public readonly record struct UpdateServerCommandData : ICommandData
     public string Name { get; init; }
     public ushort UserCount { get; init; }
     public ushort MaxUserCount { get; init; }
+    public bool? ListServer { get; init; }
 }
