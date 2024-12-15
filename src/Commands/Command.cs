@@ -32,39 +32,39 @@ public readonly record struct Command
     /// Creates a new command request object
     /// </summary>
     /// <param name="data">Command data inheriting ICommandData interface</param>
-    /// <returns>string in JSON format</returns>
-    public static string CreateRequest(ICommandData data)
-        => JsonSerializer.Serialize(CreateInstance(data, Guid.NewGuid()), JsonHelper.GetSerializerOptions());
+    /// <returns>Command object with a randomly generated GUID</returns>
+    public static Command CreateRequest(ICommandData data)
+        => CreateInstance(data, Guid.NewGuid());
 
     /// <summary>
     /// Creates a new command request object
     /// </summary>
     /// <param name="protocol">The command protocol</param>
-    /// <returns>string in JSON format</returns>
-    public static string CreateRequest(CommandProtocols protocol)
-        => JsonSerializer.Serialize(CreateInstance(protocol, Guid.NewGuid()), JsonHelper.GetSerializerOptions());
+    /// <returns>Command object with a randomly generated GUID</returns>
+    public static Command CreateRequest(CommandProtocols protocol)
+        => CreateInstance(protocol, Guid.NewGuid());
 
     /// <summary>
-    /// Creates a new command request object
+    /// Creates a new command response object with the GUID
     /// </summary>
     /// <param name="requestGuid">GUID from the command request to respond to</param>
     /// <param name="data">Command data inheriting ICommandData interface</param>
     /// <param name="statusCode">Success or Failed status response code</param>
     /// <param name="errorMessage">Message detailing the error or failure in handling the command, if any</param>
-    /// <returns>string in JSON format</returns>
-    public static string CreateResponse(Guid requestGuid, ICommandData data, CommandStatusCode statusCode, string? errorMessage = null)
-        => JsonSerializer.Serialize(CreateInstance(data, requestGuid, statusCode, errorMessage), JsonHelper.GetSerializerOptions());
+    /// <returns>Command object with the GUID</returns>
+    public static Command CreateResponse(Guid requestGuid, ICommandData data, CommandStatusCode statusCode, string? errorMessage = null)
+        => CreateInstance(data, requestGuid, statusCode, errorMessage);
 
     /// <summary>
-    /// Creates a new command request object
+    /// Creates a new command response object with the GUID
     /// </summary>
     /// <param name="requestGuid">GUID from the command request to respond to</param>
     /// <param name="protocol">The type of command</param>
     /// <param name="statusCode">Success or Failed status response code</param>
     /// <param name="errorMessage">Message detailing the error or failure in handling the command, if any</param>
-    /// <returns>string in JSON format</returns>
-    public static string CreateResponse(Guid requestGuid, CommandProtocols protocol, CommandStatusCode statusCode, string? errorMessage = null)
-        => JsonSerializer.Serialize(CreateInstance(protocol, requestGuid, statusCode, errorMessage), JsonHelper.GetSerializerOptions());
+    /// <returns>Command object with the GUID</returns>
+    public static Command CreateResponse(Guid requestGuid, CommandProtocols protocol, CommandStatusCode statusCode, string? errorMessage = null)
+        => CreateInstance(protocol, requestGuid, statusCode, errorMessage);
 
     private static Command CreateInstance(CommandProtocols protocol, Guid? requestGuid = null, CommandStatusCode? statusCode = null, string? errorMessage = null)
     {

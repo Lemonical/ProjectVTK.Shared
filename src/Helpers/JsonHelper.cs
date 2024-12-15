@@ -1,4 +1,5 @@
-﻿using ProjectVTK.Shared.Converters;
+﻿using ProjectVTK.Shared.Commands;
+using ProjectVTK.Shared.Converters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -20,4 +21,7 @@ public static class JsonHelper
 
         return options;
     }
+
+    public static string AsJson(this Command command)
+        => JsonSerializer.Serialize(command, GetSerializerOptions());
 }
