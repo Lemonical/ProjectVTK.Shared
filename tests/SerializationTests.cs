@@ -24,7 +24,7 @@ public class SerializationTests
         };
 
         // Act
-        var command = Command.CreateRequest(loginData);
+        var command = Command.CreateRequest(loginData).AsJson();
 
         // Assert
         Assert.NotNull(command);
@@ -48,17 +48,44 @@ public class SerializationTests
             Username = username,
             Password = password
         };
-        var json = Command.CreateRequest(loginData);
+        var json = Command.CreateRequest(loginData).AsJson();
 
         // Act
         var cmdObject = JsonSerializer.Deserialize<Command>(json, JsonHelper.GetSerializerOptions());
         var response = Command.CreateResponse(cmdObject.Id.GetValueOrDefault(), cmdObject.Protocol, status,
-            status == CommandStatusCode.Failed ? "Incorrect args" : null);
+            status == CommandStatusCode.Failed ? "Incorrect args" : null).AsJson();
 
         // Assert
         Assert.NotNull(response);
         Assert.Contains($"\"status\":\"{status.ToString().ToLower()}\"", response);
         Assert.Contains($"\"id\":\"{cmdObject.Id}\"", response);
         Assert.Contains($"\"protocol\":\"login\"", response);
+    }
+
+    [Fact]
+    public void ShouldDeserializeVersionCheckResponse()
+    {
+        // Arrange
+        string json = 
+            """
+            {
+                "protocol": "version_check",
+                "id": "6f878de9-5f72-455d-a5b9-4842da99a4fe",
+                "status": "success",
+                "data": {
+                    "message": "Welcome to VNO"
+                }
+            }
+            """;
+
+        // Act
+        var responseCommand = JsonSerializer.Deserialize<Command>(json, JsonHelper.GetSerializerOptions());
+
+        // Assert
+        Assert.NotNull(responseCommand.Data);
+        Assert.NotNull(responseCommand.Status);
+        Assert.Equal(CommandStatusCode.Success, responseCommand.Status);
+        Assert.Equal(CommandProtocols.VersionCheck, responseCommand.Protocol);
+        Assert.NotEqual(Guid.Empty, responseCommand.Id);
     }
 }

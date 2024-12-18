@@ -20,7 +20,7 @@ public class CommandConverter : JsonConverter<Command>
         var mappings = new Dictionary<CommandProtocols, Type>();
         foreach (var type in types)
         {
-            var attribute = (CommandProtocolAttribute)type.GetCustomAttribute(typeof(CommandProtocolAttribute))!;
+            var attribute = type.GetCustomAttribute<CommandProtocolAttribute>()!;
             mappings[attribute.Protocol] = type;
         }
 
@@ -58,7 +58,7 @@ public class CommandConverter : JsonConverter<Command>
                 case "id":
                     id = JsonSerializer.Deserialize<Guid?>(ref reader, dOptions);
                     break;
-                case "status_code":
+                case "status":
                     statusCode = JsonSerializer.Deserialize<CommandStatusCode?>(ref reader, dOptions);
                     break;
                 case "error_message":
